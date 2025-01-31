@@ -16,16 +16,16 @@ public class AppointmentService {
         appointmentRepository.create(appointment);
     }
 
-    public Appointment getAppointmentById(int id) {
-        return appointmentRepository.getAppointmentById(id);
+    public Appointment getAppointmentById(int appointmentId) {
+        return appointmentRepository.getAppointmentById(appointmentId);
     }
 
     public List<Appointment> getAllAppointments() {
         return appointmentRepository.getAllAppointments();
     }
 
-    public void deleteAppointmentById(int id) {
-        appointmentRepository.delete(id);
+    public void deleteAppointmentById(int appointmentId) {
+        appointmentRepository.delete(appointmentId);
     }
 
     public void updateAppointment(Appointment appointment) {

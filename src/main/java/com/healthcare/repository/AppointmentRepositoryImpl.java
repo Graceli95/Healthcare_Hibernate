@@ -25,9 +25,9 @@ public class AppointmentRepositoryImpl {
 
     }
 
-    public Appointment getAppointmentById(int id) {
+    public Appointment getAppointmentById(int appointmentId) {
         try(Session session = sessionFactory.openSession()){
-            return session.get(Appointment.class, id);
+            return session.get(Appointment.class, appointmentId);
         }
 
     }
@@ -40,10 +40,10 @@ public class AppointmentRepositoryImpl {
         }
     }
 
-    public void delete(int id) {
+    public void delete(int appointmentId) {
         try(Session session = sessionFactory.openSession()){
             Transaction transaction = session.beginTransaction();
-            Appointment appointment = session.get(Appointment.class,id);
+            Appointment appointment = session.get(Appointment.class,appointmentId);
             if(appointment != null){
                 session.delete(appointment);
             }

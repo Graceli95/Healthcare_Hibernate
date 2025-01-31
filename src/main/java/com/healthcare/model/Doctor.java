@@ -42,29 +42,16 @@ private Set<Appointment> appointments = new HashSet<>();
 )
 private Set<Patient> patients = new HashSet<>();
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Doctor that = (Doctor) o;
-//        return doctorId == that.doctorId;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(doctorId);
-//    }
-
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Doctor doctor = (Doctor) o;
-        return doctorId == doctor.doctorId && Objects.equals(firstName, doctor.firstName) && Objects.equals(lastName, doctor.lastName) && Objects.equals(specialty, doctor.specialty) && Objects.equals(Email, doctor.Email) && Objects.equals(appointments, doctor.appointments) && Objects.equals(patients, doctor.patients);
+        return doctorId == doctor.doctorId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(doctorId, firstName, lastName, specialty, Email, appointments, patients);
+        return Objects.hashCode(doctorId);
     }
 }
