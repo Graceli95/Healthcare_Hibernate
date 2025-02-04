@@ -1,5 +1,6 @@
 package com.healthcare.repository;
 
+import com.healthcare.model.Doctor;
 import com.healthcare.model.Patient;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -51,6 +52,32 @@ public class PatientRepositoryImpl{
     public List<Patient> getAllPatients() {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery("from Patient", Patient.class).list();
+        }
+    }
+
+    public void addDoctorToPatient(int patientId, Doctor doctor) {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Patient patient = session.get(Patient.class, patientId);
+            if (patient != null) {
+                patient.getDoctors().add(doctor);
+                session.merge(patient);
+            }
+            transaction.commit();
+
+        }
+    }
+
+    public void removeDoctorFromPatient(int patientId, Doctor doctor){
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Patient patient = session.get(Patient.class, patientId);
+            if (patient != null) {
+                patient.getDoctors().remove(doctor);
+                session.merge(patient);
+            }
+            transaction.commit();
+
         }
     }
 }

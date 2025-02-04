@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@ToString(exclude="patients")
+@ToString(exclude={"patients", "appointments"})
 @Table(name="Doctors")
 
 public class Doctor {
@@ -30,11 +30,13 @@ public class Doctor {
 @Column(name="Email")
     private String Email;
 
-@OneToMany(mappedBy = "doctor")
+@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 private Set<Appointment> appointments = new HashSet<>();
 
+@OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL)  //the use of mappedBy in Hibernate to indicate the owner of the relationship.
+private Office office;
 
-@ManyToMany
+@ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
 @JoinTable(
         name="Doctor_Patient",
         joinColumns = @JoinColumn(name="DoctorId"),

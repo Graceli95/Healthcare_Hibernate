@@ -88,4 +88,28 @@ No transaction is needed for this operation, but ensure the session is opened an
             return session.createQuery("from Doctor", Doctor.class).list();
         }
     }
+
+    public void addPatientToDoctor(int doctorId, Patient patient){
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Doctor doctor = session.get(Doctor.class, doctorId);
+            if (doctor != null && !doctor.getPatients().contains(patient)) {
+                doctor.getPatients().add(patient);
+                session.merge(doctor);
+            }
+            transaction.commit();
+        }
+    }
+
+    public void removePatientFromDoctor(int doctorId, Patient patient){
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            Doctor doctor = session.get(Doctor.class, doctorId);
+            if(doctor !=null && doctor.getPatients().contains(patient)){
+                doctor.getPatients().remove(patient);
+                session.merge(doctor);
+            }
+            transaction.commit();
+        }
+    }
 }

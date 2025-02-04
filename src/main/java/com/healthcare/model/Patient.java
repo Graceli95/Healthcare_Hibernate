@@ -35,11 +35,12 @@ public class Patient {
     @Column(name = "PhoneNumber")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "patient")
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Appointment> appointments = new HashSet<>();
 
-    @ManyToMany(mappedBy = "patients")
+    @ManyToMany(mappedBy = "patients", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
     private Set<Doctor> doctors = new HashSet<>();
+
 
 
     @Override

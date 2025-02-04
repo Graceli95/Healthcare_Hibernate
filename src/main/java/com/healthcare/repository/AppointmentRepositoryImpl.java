@@ -57,6 +57,21 @@ public class AppointmentRepositoryImpl {
         }
     }
 
+    public boolean hasOtherAppointmentsBetween(int doctorId, int patientId) {
+        //check whether a patient has more than one appointment with a specific doctor.
+        try (Session session = sessionFactory.openSession()) {
+            String query = "SELECT COUNT(a) FROM Appointment a " +
+                    "WHERE a.doctor.doctorId = :doctorId " +
+                    "AND a.patient.patientId = :patientId";
+
+            Long count = session.createQuery(query, Long.class)
+                    .setParameter("doctorId", doctorId)
+                    .setParameter("patientId", patientId)
+                    .uniqueResult();
+            return count != null && count > 1;
+        }
+    }
+
 
 }
 

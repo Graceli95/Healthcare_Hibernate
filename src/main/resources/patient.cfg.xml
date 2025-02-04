@@ -24,6 +24,7 @@
         <mapping class="com.healthcare.model.Patient"/>
         <mapping class="com.healthcare.model.Doctor"/>
         <mapping class="com.healthcare.model.Appointment"/>
+        <mapping class="com.healthcare.model.Office"/>
 
 
 

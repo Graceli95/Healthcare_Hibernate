@@ -31,4 +31,9 @@ public class AppointmentService {
     public void updateAppointment(Appointment appointment) {
         appointmentRepository.update(appointment);
     }
+
+    public boolean hasOtherAppointmentsBetween(int doctorId, int patientId){
+        return appointmentRepository.hasOtherAppointmentsBetween(doctorId, patientId);
+
+    }
 }

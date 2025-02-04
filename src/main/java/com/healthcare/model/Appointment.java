@@ -2,11 +2,13 @@ package com.healthcare.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Entity
 @Data
+@ToString(exclude = {"patient", "doctor"})
 
 @Table(name="Appointments")
 public class Appointment {
@@ -16,11 +18,6 @@ public class Appointment {
     @Column(name="AppointmentId")
     private int appointmentId;
 
-    @Column(name="PatientId")
-    private int patientId;
-
-    @Column(name="DoctorId")
-    private int doctorId;
 
     @Column(name="AppointmentDate")
     private String appointmentDate;
@@ -29,7 +26,7 @@ public class Appointment {
     private String notes;
 
     @ManyToOne
-    @JoinColumn(name = "doctorId")
+    @JoinColumn(name = "DoctorID")
     private Doctor doctor;
 
     @ManyToOne
