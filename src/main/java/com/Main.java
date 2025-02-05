@@ -337,16 +337,38 @@ public class Main {
                 appointmentId = scanner.nextInt();
                 scanner.nextLine();
                 Appointment appointment1 = appointmentService.getAppointmentById(appointmentId);
-                Doctor doctorToCheck=appointment1.getDoctor();
-                Patient patientToCheck=appointment1.getPatient();
-                appointmentService.deleteAppointmentById(appointmentId);
-                if (!appointmentService.hasOtherAppointmentsBetween(
-                        doctorToCheck.getDoctorId(), patientToCheck.getPatientId())) {
-                    doctorService.removePatientFromDoctor(doctorToCheck.getDoctorId(), patientToCheck);
-                    patientService.removeDoctorFromPatient(patientToCheck.getPatientId(), doctorToCheck);
+                if (appointment1 != null) {
+                    Doctor doctorToCheck = doctorService.getDoctor(appointment1.getDoctor().getDoctorId());  // ✅ Fetch doctor eagerly
+                    Patient patientToCheck = patientService.getPatientById(appointment1.getPatient().getPatientId()); // ✅ Fetch patient eagerly
+                    // Doctor doctorToCheck=appointment1.getDoctor();
+                    //Patient patientToCheck=appointment1.getPatient();
+
+                    //delete the appointment first
+                    appointmentService.deleteAppointmentById(appointmentId);
+
+                    // Check if this was the last appointment between the doctor and patient
+                    boolean hasOtherAppointments = appointmentService.hasOtherAppointmentsBetween(doctorToCheck.getDoctorId(), patientToCheck.getPatientId());
+
+                    if(!hasOtherAppointments) {
+                        // If no other appointments exist, remove the relationship
+                        doctorToCheck.getPatients().remove(patientToCheck);
+                        patientToCheck.getDoctors().remove(doctorToCheck);
+                        doctorService.updateDoctor(doctorToCheck);
+                        patientService.updatePatient(patientToCheck);
+                    }
+                    System.out.println("Appointment deleted successfully.");
+                } else {
+                    System.out.println("Appointment not found.");
                 }
 
-                System.out.println("Appointment deleted successfully.");
+//                appointmentService.deleteAppointmentById(appointmentId);
+//                if (!appointmentService.hasOtherAppointmentsBetween(
+//                        doctorToCheck.getDoctorId(), patientToCheck.getPatientId())) {
+//                    doctorService.removePatientFromDoctor(doctorToCheck.getDoctorId(), patientToCheck);
+//                    patientService.removeDoctorFromPatient(patientToCheck.getPatientId(), doctorToCheck);
+//                }
+
+
                 break;
             case 5:
                 System.out.println("Listing All Appointments:");
