@@ -9,7 +9,7 @@ import java.util.List;
 
 public class AppointmentRepositoryImpl {
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public AppointmentRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -18,7 +18,7 @@ public class AppointmentRepositoryImpl {
     public void create(Appointment appointment) {
        try(Session session = sessionFactory.openSession()){
            Transaction transaction = session.beginTransaction();
-           session.save(appointment);
+           session.persist(appointment);
            transaction.commit();
        }
 
@@ -35,7 +35,7 @@ public class AppointmentRepositoryImpl {
     public void update(Appointment appointment) {
         try(Session session = sessionFactory.openSession()){
             Transaction transaction = session.beginTransaction();
-            session.update(appointment);
+            session.merge(appointment);
             transaction.commit();
         }
     }
@@ -45,7 +45,7 @@ public class AppointmentRepositoryImpl {
             Transaction transaction = session.beginTransaction();
             Appointment appointment = session.get(Appointment.class,appointmentId);
             if(appointment != null){
-                session.delete(appointment);
+                session.remove(appointment);
             }
             transaction.commit();
         }
@@ -68,7 +68,7 @@ public class AppointmentRepositoryImpl {
                     .setParameter("doctorId", doctorId)
                     .setParameter("patientId", patientId)
                     .uniqueResult();
-            return count != null && count > 1;
+            return count != null && count > 1; // ✅ Fix: Check for more than 1 instead of just > 0
         }
     }
 

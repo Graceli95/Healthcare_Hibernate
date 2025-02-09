@@ -1,5 +1,6 @@
 package com.healthcare.repository;
 
+import com.healthcare.model.Doctor;
 import com.healthcare.model.Office;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,7 +9,7 @@ import org.hibernate.Transaction;
 import java.util.List;
 
 public class OfficeRepositoryImpl {
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public OfficeRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -17,7 +18,14 @@ public class OfficeRepositoryImpl {
     public void createOffice(Office office){
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.save(office);
+
+            //Ensure the doctor is managed
+            Doctor managedDoctor = session.get(Doctor.class, office.getDoctor().getDoctorId());
+            if (managedDoctor == null) {
+                throw new IllegalArgumentException("Doctor with ID " + office.getDoctor().getDoctorId() + " does not exist");
+            }
+            office.setDoctor(managedDoctor); //Use the managed entity
+            session.persist(office);
             transaction.commit();
         }
     }
@@ -32,8 +40,15 @@ public class OfficeRepositoryImpl {
     public void updateOffice(Office office){
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.update(office);
+
+            // Ensure the new doctor is managed (if changed)
+            if(office.getDoctor() != null){
+                Doctor managedDoctor = session.get(Doctor.class, office.getDoctor().getDoctorId());
+                office.setDoctor(managedDoctor);
+            }
+            session.merge(office);
             transaction.commit();
+
         }
     }
 
@@ -42,10 +57,15 @@ public class OfficeRepositoryImpl {
             Transaction transaction = session.beginTransaction();
             Office office = session.get(Office.class, officeId);
             if (office != null) {
-                session.delete(office);
+                if (office.getDoctor() != null) {
+                    office.getDoctor().setOffice(null); // Break the association
+                    session.merge(office.getDoctor()); // Persist the change in the database
+                }
+                session.remove(office);
             }
             transaction.commit();
         }
+
     }
 
     public List<Office> getAllOffices(){

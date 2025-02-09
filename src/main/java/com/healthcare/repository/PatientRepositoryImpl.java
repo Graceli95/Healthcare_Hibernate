@@ -19,22 +19,33 @@ public class PatientRepositoryImpl{
     public void createPatient(Patient patient) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.save(patient);
+            session.persist(patient);
             transaction.commit();
         }
     }
 
-    public Patient getPatientById(int patientId) {
+//    public Patient getPatientById(int id) {
+//        try (Session session = sessionFactory.openSession()) {
+//            return session.get(Patient.class, id);
+//        }
+//    }
+    public Patient getPatientById(int id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Patient.class, patientId);
+            //This method retrieves a Patient entity by its id, along with its associated doctors.
+            return  session.createQuery("select p from Patient p " +
+                    "left join fetch p.doctors " +
+                    "where p.patientId = :id", Patient.class)
+                    .setParameter("id", id)
+                    .uniqueResult();
         }
     }
 
     public void updatePatient(Patient patient) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            session.update(patient);
+            session.merge(patient);
             transaction.commit();
+
         }
     }
 
@@ -43,15 +54,24 @@ public class PatientRepositoryImpl{
             Transaction transaction = session.beginTransaction();
             Patient patient = session.get(Patient.class, patientId);
             if (patient != null) {
-                session.delete(patient);
+                session.remove(patient);
             }
             transaction.commit();
         }
     }
 
+//    public List<Patient> getAllPatients() { //this method is when you only need patient details.
+//        try (Session session = sessionFactory.openSession()) {
+//            return session.createQuery("from Patient", Patient.class).list();
+//        }
+//    }
     public List<Patient> getAllPatients() {
+        //This method retrieves all Patient entities along with their related appointments and doctors.
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from Patient", Patient.class).list();
+            return session.createQuery("select distinct p from Patient p" +
+                    " left join fetch p.appointments " +
+                    "left join fetch p.doctors", Patient.class)
+                    .list();
         }
     }
 
@@ -59,7 +79,7 @@ public class PatientRepositoryImpl{
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Patient patient = session.get(Patient.class, patientId);
-            if (patient != null) {
+            if (patient != null && !patient.getDoctors().contains(doctor)) {
                 patient.getDoctors().add(doctor);
                 session.merge(patient);
             }
@@ -72,7 +92,7 @@ public class PatientRepositoryImpl{
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             Patient patient = session.get(Patient.class, patientId);
-            if (patient != null) {
+            if (patient != null && patient.getDoctors().contains(doctor)) {
                 patient.getDoctors().remove(doctor);
                 session.merge(patient);
             }

@@ -6,7 +6,6 @@ package com.healthcare.service;
 
 import com.healthcare.model.Doctor;
 import com.healthcare.repository.DoctorRepositoryImpl;
-import com.healthcare.repository.PatientRepositoryImpl;
 import com.healthcare.model.Patient;
 
 
@@ -26,8 +25,8 @@ public class DoctorService {
         doctorRepository.createDoctor(doctor);
     }
 
-    public Doctor getDoctor(int id) {
-        return doctorRepository.getDoctorId(id);
+    public Doctor getDoctorById(int id) {
+        return doctorRepository.findById(id);
     }
 
     public List<Doctor> getAllDoctors() {

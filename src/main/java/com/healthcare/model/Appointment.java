@@ -1,13 +1,14 @@
 package com.healthcare.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @ToString(exclude = {"patient", "doctor"})
 
 @Table(name="Appointments")
